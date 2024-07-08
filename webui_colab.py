@@ -67,6 +67,7 @@ def change_instruction(mode_checkbox_group):
     return instruct_dict[mode_checkbox_group]
 
 def generate_audio(tts_text, mode_checkbox_group, sft_dropdown, prompt_text, prompt_wav_upload, prompt_wav_record, instruct_text, seed):
+    tts_text = tts_text.strip().split("\n") + ".。"
     if prompt_wav_upload is not None:
         prompt_wav = prompt_wav_upload
     elif prompt_wav_record is not None:
