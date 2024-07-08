@@ -143,7 +143,7 @@ def main():
         gr.Markdown("### <center>🤗 更多精彩，尽在[滔滔AI](https://www.talktalkai.com/)；滔滔AI，为爱滔滔！💕</center>")
 
         with gr.Row():
-            tts_text = gr.Textbox(label="请填写您希望声音复刻的文本内容", placeholder="想说却还没说的，还很多...")
+            tts_text = gr.Textbox(label="请填写您希望声音复刻的文本内容", lines=3, placeholder="想说却还没说的，还很多...")
             mode_checkbox_group = gr.Radio(choices=inference_mode_list, label='请选择声音复刻类型', value=inference_mode_list[0])
             instruction_text = gr.Text(label="📔 操作指南", value=instruct_dict[inference_mode_list[0]], scale=0.5)
             sft_dropdown = gr.Dropdown(choices=sft_spk, label='选择预训练音色', value=sft_spk[0], scale=0.25, visible=False)
