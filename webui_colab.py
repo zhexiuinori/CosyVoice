@@ -58,10 +58,10 @@ def postprocess(speech, top_db=60, hop_length=220, win_length=440):
     speech = torch.concat([speech, torch.zeros(1, int(target_sr * 0.2))], dim=1)
     return speech
 
-inference_mode_list = ['预训练音色', '3s极速复刻', '跨语种复刻', '自然语言控制']
+inference_mode_list = ['3s极速复刻', '跨语言复刻']
 instruct_dict = {'预训练音色': '1. 选择预训练音色\n2.点击生成音频按钮',
-                 '3s极速复刻': '1. 选择prompt音频文件，或录入prompt音频，若同时提供，优先选择prompt音频文件\n2. 输入prompt文本\n3.点击生成音频按钮',
-                 '跨语种复刻': '1. 选择prompt音频文件，或录入prompt音频，若同时提供，优先选择prompt音频文件\n2.点击生成音频按钮',
+                 '3s极速复刻': '1. 本地上传参考音频，或麦克风录入参考音频，若同时提供，优先选择本地上传的参考音频\n2. 输入参考音频对应的文本内容以及您希望声音复刻的文本内容\n3.点击“一键开启声音复刻之旅吧💕”按钮',
+                 '跨语言复刻': '1. 本地上传参考音频，或麦克风录入参考音频，若同时提供，优先选择本地上传的参考音频\n2. 输入参考音频对应的文本内容以及您希望声音复刻的文本内容，建议选择不同语言的文本\n3.点击“一键开启声音复刻之旅吧💕”按钮',
                  '自然语言控制': '1. 输入instruct文本\n2.点击生成音频按钮'}
 def change_instruction(mode_checkbox_group):
     return instruct_dict[mode_checkbox_group]
@@ -138,34 +138,42 @@ def generate_audio(tts_text, mode_checkbox_group, sft_dropdown, prompt_text, pro
 
 def main():
     with gr.Blocks() as demo:
-        gr.Markdown("### 代码库 [CosyVoice](https://github.com/FunAudioLLM/CosyVoice) 预训练模型 [CosyVoice-300M](https://www.modelscope.cn/models/iic/CosyVoice-300M) [CosyVoice-300M-Instruct](https://www.modelscope.cn/models/iic/CosyVoice-300M-Instruct) [CosyVoice-300M-SFT](https://www.modelscope.cn/models/iic/CosyVoice-300M-SFT)")
-        gr.Markdown("#### 请输入需要合成的文本，选择推理模式，并按照提示步骤进行操作")
+        gr.Markdown("# <center>🌊💕🎶 [CosyVoice](https://github.com/FunAudioLLM/CosyVoice)</center>") 3秒音频，开启最强声音复刻</center>")
+        gr.Markdown("## <center>🌟 只需3秒参考音频，一键开启超拟人真实声音复刻，支持中日英韩粤语，无需任何训练！
+        gr.Markdown("### <center>🤗 更多精彩，尽在[滔滔AI](https://www.talktalkai.com/)；滔滔AI，为爱滔滔！💕</center>")
 
-        tts_text = gr.Textbox(label="输入合成文本", lines=1, value="我是通义实验室语音团队全新推出的生成式语音大模型，提供舒适自然的语音合成能力。")
+        tts_text = gr.Textbox(label="请填写您希望声音复刻的文本内容", lines=1, placeholder="想说却还没说的，还很多...")
 
         with gr.Row():
-            mode_checkbox_group = gr.Radio(choices=inference_mode_list, label='选择推理模式', value=inference_mode_list[0])
-            instruction_text = gr.Text(label="操作步骤", value=instruct_dict[inference_mode_list[0]], scale=0.5)
-            sft_dropdown = gr.Dropdown(choices=sft_spk, label='选择预训练音色', value=sft_spk[0], scale=0.25)
+            mode_checkbox_group = gr.Radio(choices=inference_mode_list, label='请选择声音复刻类型', value=inference_mode_list[0])
+            instruction_text = gr.Text(label="操作指南", value=instruct_dict[inference_mode_list[0]], scale=0.5)
+            sft_dropdown = gr.Dropdown(choices=sft_spk, label='选择预训练音色', value=sft_spk[0], scale=0.25, visible=False)
             with gr.Column(scale=0.25):
-                seed_button = gr.Button(value="\U0001F3B2")
-                seed = gr.Number(value=0, label="随机推理种子")
+                seed_button = gr.Button(value="\U0001F3B2", visible=False)
+                seed = gr.Number(value=0, label="随机推理种子", visible=False)
 
         with gr.Row():
-            prompt_wav_upload = gr.Audio(sources='upload', type='filepath', label='选择prompt音频文件，注意采样率不低于16khz')
-            prompt_wav_record = gr.Audio(sources='microphone', type='filepath', label='录制prompt音频文件')
-        prompt_text = gr.Textbox(label="输入prompt文本", lines=1, placeholder="请输入prompt文本，需与prompt音频内容一致，暂时不支持自动识别...", value='')
-        instruct_text = gr.Textbox(label="输入instruct文本", lines=1, placeholder="请输入instruct文本.", value='')
+            prompt_wav_upload = gr.Audio(sources='upload', type='filepath', label='请从本地上传您喜欢的参考音频，注意采样率不低于16kHz')
+            prompt_wav_record = gr.Audio(sources='microphone', type='filepath', label='通过麦克风录制参考音频，程序会优先使用本地上传的参考音频')
+        prompt_text = gr.Textbox(label="请填写参考音频对应的文本内容", lines=1, value='')
+        instruct_text = gr.Textbox(label="输入instruct文本", lines=1, placeholder="请输入instruct文本.", value='', visible=False)
 
-        generate_button = gr.Button("生成音频")
+        generate_button = gr.Button("一键开启声音复刻之旅吧💕")
 
-        audio_output = gr.Audio(label="合成音频")
+        audio_output = gr.Audio(label="为您生成的专属音频🎶")
 
         seed_button.click(generate_seed, inputs=[], outputs=seed)
         generate_button.click(generate_audio,
                               inputs=[tts_text, mode_checkbox_group, sft_dropdown, prompt_text, prompt_wav_upload, prompt_wav_record, instruct_text, seed],
                               outputs=[audio_output])
         mode_checkbox_group.change(fn=change_instruction, inputs=[mode_checkbox_group], outputs=[instruction_text])
+        gr.Markdown("### <center>注意❗：请不要生成会对个人以及组织造成侵害的内容，此程序仅供科研、学习及个人娱乐使用。请自觉合规使用此程序，程序开发者不负有任何责任。</center>")
+        gr.HTML('''
+            <div class="footer">
+                        <p>🌊🏞️🎶 - 江水东流急，滔滔无尽声。 明·顾璘
+                        </p>
+            </div>
+        ''')
     demo.queue()
     demo.launch(share=True, show_error=True)
 
