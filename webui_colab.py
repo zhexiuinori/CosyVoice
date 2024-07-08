@@ -58,10 +58,10 @@ def postprocess(speech, top_db=60, hop_length=220, win_length=440):
     speech = torch.concat([speech, torch.zeros(1, int(target_sr * 0.2))], dim=1)
     return speech
 
-inference_mode_list = ['3s极速复刻', '跨语言复刻']
+inference_mode_list = ['3s极速复刻', '跨语种复刻']
 instruct_dict = {'预训练音色': '1. 选择预训练音色\n2.点击生成音频按钮',
                  '3s极速复刻': '1. 本地上传参考音频，或麦克风录入参考音频，若同时提供，优先选择本地上传的参考音频\n2. 输入参考音频对应的文本内容以及您希望声音复刻的文本内容\n3.点击“一键开启声音复刻之旅吧💕”按钮',
-                 '跨语言复刻': '1. 本地上传参考音频，或麦克风录入参考音频，若同时提供，优先选择本地上传的参考音频\n2. 输入参考音频对应的文本内容以及您希望声音复刻的文本内容，建议选择不同语言的文本\n3.点击“一键开启声音复刻之旅吧💕”按钮',
+                 '跨语种复刻': '1. 本地上传参考音频，或麦克风录入参考音频，若同时提供，优先选择本地上传的参考音频\n2. 输入参考音频对应的文本内容以及您希望声音复刻的文本内容，建议选择不同语言的文本\n3.点击“一键开启声音复刻之旅吧💕”按钮',
                  '自然语言控制': '1. 输入instruct文本\n2.点击生成音频按钮'}
 def change_instruction(mode_checkbox_group):
     return instruct_dict[mode_checkbox_group]
