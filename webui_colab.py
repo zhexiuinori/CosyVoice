@@ -147,9 +147,9 @@ def main():
             mode_checkbox_group = gr.Radio(choices=inference_mode_list, label='请选择声音复刻类型', value=inference_mode_list[0])
             instruction_text = gr.Text(label="📔 操作指南", value=instruct_dict[inference_mode_list[0]], scale=0.5)
             sft_dropdown = gr.Dropdown(choices=sft_spk, label='选择预训练音色', value=sft_spk[0], scale=0.25, visible=False)
-            #with gr.Column(scale=0.25):
-            seed_button = gr.Button(value="\U0001F3B2", visible=False)
-            seed = gr.Number(value=0, label="随机推理种子", visible=False)
+            with gr.Column(scale=0.25):
+                seed_button = gr.Button(value="\U0001F3B2", visible=True)
+                seed = gr.Number(value=0, label="随机推理种子", info="默认为0，即每次生成结果一致", visible=True)
 
         with gr.Row():
             prompt_wav_upload = gr.Audio(sources='upload', type='filepath', label='请从本地上传您喜欢的参考音频，注意采样率不低于16kHz')
