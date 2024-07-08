@@ -138,8 +138,8 @@ def generate_audio(tts_text, mode_checkbox_group, sft_dropdown, prompt_text, pro
 
 def main():
     with gr.Blocks() as demo:
-        gr.Markdown("# <center>🌊💕🎶 [CosyVoice](https://github.com/FunAudioLLM/CosyVoice)</center>") 3秒音频，开启最强声音复刻</center>")
-        gr.Markdown("## <center>🌟 只需3秒参考音频，一键开启超拟人真实声音复刻，支持中日英韩粤语，无需任何训练！
+        gr.Markdown("# <center>🌊💕🎶 [CosyVoice](https://github.com/FunAudioLLM/CosyVoice) 3秒音频，开启最强声音复刻</center>")
+        gr.Markdown("## <center>🌟 只需3秒参考音频，一键开启超拟人真实声音复刻，支持中日英韩粤语，无需任何训练！</center>")
         gr.Markdown("### <center>🤗 更多精彩，尽在[滔滔AI](https://www.talktalkai.com/)；滔滔AI，为爱滔滔！💕</center>")
 
         tts_text = gr.Textbox(label="请填写您希望声音复刻的文本内容", lines=1, placeholder="想说却还没说的，还很多...")
