@@ -30,7 +30,7 @@ logging.getLogger('matplotlib').setLevel(logging.WARNING)
 from cosyvoice.cli.cosyvoice import CosyVoice
 from cosyvoice.utils.file_utils import load_wav
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.WARNING,
                     format='%(asctime)s %(levelname)s %(message)s')
 
 def generate_seed():
