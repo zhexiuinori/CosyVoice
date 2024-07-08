@@ -142,9 +142,8 @@ def main():
         gr.Markdown("## <center>🌟 只需3秒参考音频，一键开启超拟人真实声音复刻，支持中日英韩粤语，无需任何训练！</center>")
         gr.Markdown("### <center>🤗 更多精彩，尽在[滔滔AI](https://www.talktalkai.com/)；滔滔AI，为爱滔滔！💕</center>")
 
-        tts_text = gr.Textbox(label="请填写您希望声音复刻的文本内容", lines=1, placeholder="想说却还没说的，还很多...")
-
         with gr.Row():
+            tts_text = gr.Textbox(label="请填写您希望声音复刻的文本内容", placeholder="想说却还没说的，还很多...")
             mode_checkbox_group = gr.Radio(choices=inference_mode_list, label='请选择声音复刻类型', value=inference_mode_list[0])
             instruction_text = gr.Text(label="📔 操作指南", value=instruct_dict[inference_mode_list[0]], scale=0.5)
             sft_dropdown = gr.Dropdown(choices=sft_spk, label='选择预训练音色', value=sft_spk[0], scale=0.25, visible=False)
@@ -158,7 +157,7 @@ def main():
         prompt_text = gr.Textbox(label="请填写参考音频对应的文本内容", lines=1, value='')
         instruct_text = gr.Textbox(label="输入instruct文本", lines=1, placeholder="请输入instruct文本.", value='', visible=False)
 
-        generate_button = gr.Button("一键开启声音复刻之旅吧💕")
+        generate_button = gr.Button("一键开启声音复刻之旅吧💕", variant="primary")
 
         audio_output = gr.Audio(label="为您生成的专属音频🎶")
 
