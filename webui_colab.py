@@ -30,7 +30,6 @@ logging.getLogger('matplotlib').setLevel(logging.WARNING)
 from cosyvoice.cli.cosyvoice import CosyVoice
 from cosyvoice.utils.file_utils import load_wav
 
-import spaces
 
 logging.basicConfig(level=logging.WARNING,
                     format='%(asctime)s %(levelname)s %(message)s')
@@ -68,12 +67,9 @@ instruct_dict = {'预训练音色': '1. 选择预训练音色\n2.点击生成音
 def change_instruction(mode_checkbox_group):
     return instruct_dict[mode_checkbox_group]
 
-@spaces.GPU
 def generate_audio(tts_text, mode_checkbox_group, sft_dropdown, prompt_text, prompt_wav_upload, prompt_wav_record, instruct_text, seed):
     tts_text = "".join([item1 for item1 in tts_text.strip().split("\n") if item1 != ""]) + ".。"
     prompt_text = "".join([item2 for item2 in prompt_text.strip().split("\n") if item2 != ""])
-    if len(tts_text)>108:
-        raise Exception('抱歉！你输入的文本超过了100字符，请您删减文本！')
     if prompt_wav_upload is not None:
         prompt_wav = prompt_wav_upload
     elif prompt_wav_record is not None:
