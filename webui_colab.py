@@ -30,6 +30,8 @@ logging.getLogger('matplotlib').setLevel(logging.WARNING)
 from cosyvoice.cli.cosyvoice import CosyVoice
 from cosyvoice.utils.file_utils import load_wav
 
+import spaces
+
 logging.basicConfig(level=logging.WARNING,
                     format='%(asctime)s %(levelname)s %(message)s')
 
@@ -60,14 +62,18 @@ def postprocess(speech, top_db=60, hop_length=220, win_length=440):
 
 inference_mode_list = ['3s极速复刻', '跨语种复刻']
 instruct_dict = {'预训练音色': '1. 选择预训练音色\n2.点击生成音频按钮',
-                 '3s极速复刻': '1. 本地上传参考音频，或麦克风录入参考音频，若同时提供，优先选择本地上传的参考音频\n2. 输入参考音频对应的文本内容以及您希望声音复刻的文本内容\n3.点击“一键开启声音复刻之旅吧💕”按钮',
-                 '跨语种复刻': '1. 本地上传参考音频，或麦克风录入参考音频，若同时提供，优先选择本地上传的参考音频\n2. **无需输入**参考音频对应的文本内容\n3.点击“一键开启声音复刻之旅吧💕”按钮',
+                 '3s极速复刻': '1. 本地上传参考音频，或麦克风录入\n2. 输入参考音频对应的文本以及希望声音复刻的文本\n3.点击“一键开启声音复刻💕”',
+                 '跨语种复刻': '1. 本地上传参考音频，或麦克风录入\n2. **无需输入**参考音频对应的文本\n3.点击“一键开启声音复刻💕”',
                  '自然语言控制': '1. 输入instruct文本\n2.点击生成音频按钮'}
 def change_instruction(mode_checkbox_group):
     return instruct_dict[mode_checkbox_group]
 
+@spaces.GPU
 def generate_audio(tts_text, mode_checkbox_group, sft_dropdown, prompt_text, prompt_wav_upload, prompt_wav_record, instruct_text, seed):
-    tts_text = "".join([item for item in tts_text.strip().split("\n") if item != ""]) + ".。"
+    tts_text = "".join([item1 for item1 in tts_text.strip().split("\n") if item1 != ""]) + ".。"
+    prompt_text = "".join([item2 for item2 in prompt_text.strip().split("\n") if item2 != ""])
+    if len(tts_text)>108:
+        raise Exception('抱歉！你输入的文本超过了100字符，请您删减文本！')
     if prompt_wav_upload is not None:
         prompt_wav = prompt_wav_upload
     elif prompt_wav_record is not None:
@@ -138,7 +144,7 @@ def generate_audio(tts_text, mode_checkbox_group, sft_dropdown, prompt_text, pro
 
 def main():
     with gr.Blocks() as demo:
-        gr.Markdown("# <center>🌊💕🎶 [CosyVoice](https://github.com/FunAudioLLM/CosyVoice) 3秒音频，开启最强声音复刻</center>")
+        gr.Markdown("# <center>🌊💕🎶 [CosyVoice](https://www.bilibili.com/video/BV1vz421q7ir/) 3秒音频，开启最强声音复刻</center>")
         gr.Markdown("## <center>🌟 只需3秒参考音频，一键开启超拟人真实声音复刻，支持中日英韩粤语，无需任何训练！</center>")
         gr.Markdown("### <center>🤗 更多精彩，尽在[滔滔AI](https://www.talktalkai.com/)；滔滔AI，为爱滔滔！💕</center>")
 
@@ -149,15 +155,15 @@ def main():
             sft_dropdown = gr.Dropdown(choices=sft_spk, label='选择预训练音色', value=sft_spk[0], scale=0.25, visible=False)
             with gr.Column(scale=0.25):
                 seed_button = gr.Button(value="\U0001F3B2", visible=True)
-                seed = gr.Number(value=0, label="随机推理种子", info="默认为0，即每次生成结果一致", visible=True)
+                seed = gr.Number(value=0, label="随机推理种子", info="若数值保持不变，则每次生成结果一致", visible=True)
 
         with gr.Row():
+            prompt_text = gr.Textbox(label="请填写参考音频对应的文本内容", lines=3, placeholder="告诉我参考音频说了些什么吧...")
             prompt_wav_upload = gr.Audio(sources='upload', type='filepath', label='请从本地上传您喜欢的参考音频，注意采样率不低于16kHz')
             prompt_wav_record = gr.Audio(sources='microphone', type='filepath', label='通过麦克风录制参考音频，程序会优先使用本地上传的参考音频')
-        prompt_text = gr.Textbox(label="请填写参考音频对应的文本内容", lines=1, value='')
+            generate_button = gr.Button("一键开启声音复刻💕", variant="primary")
         instruct_text = gr.Textbox(label="输入instruct文本", lines=1, placeholder="请输入instruct文本.", value='', visible=False)
 
-        generate_button = gr.Button("一键开启声音复刻之旅吧💕", variant="primary")
 
         audio_output = gr.Audio(label="为您生成的专属音频🎶")
 
